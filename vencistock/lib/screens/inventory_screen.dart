@@ -7,6 +7,8 @@ import '../db/database_helper.dart';
 import '../models/product.dart';
 
 class InventoryScreen extends StatefulWidget {
+  const InventoryScreen({Key? key}) : super(key: key);
+
   @override
   State<InventoryScreen> createState() => _InventoryScreenState();
 }
@@ -44,7 +46,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
         });
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Producto no encontrado')));
+        ).showSnackBar(const SnackBar(content: Text('Producto no encontrado')));
       }
     }
   }
@@ -52,7 +54,9 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Future<void> _scanBarcode() async {
     final barcode = await Navigator.push(
       context,
-      MaterialPageRoute<String>(builder: (context) => BarcodeScannerScreen()),
+      MaterialPageRoute<String>(
+        builder: (context) => const BarcodeScannerScreen(),
+      ),
     );
 
     if (barcode != null) {
@@ -72,12 +76,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Nuevo stock'),
+              decoration: const InputDecoration(labelText: 'Nuevo stock'),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -86,7 +90,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
                     Navigator.pop(context, newStock);
                   }
                 },
-                child: Text('Guardar'),
+                child: const Text('Guardar'),
               ),
             ],
           ),
@@ -103,16 +107,16 @@ class _InventoryScreenState extends State<InventoryScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('Eliminar producto'),
+            title: const Text('Eliminar producto'),
             content: Text('¿Quieres eliminar ${product.name}?'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: Text('Eliminar'),
+                child: const Text('Eliminar'),
               ),
             ],
           ),
@@ -172,15 +176,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inventario'),
+        title: const Text('Inventario'),
         actions: [
           IconButton(
-            icon: Icon(Icons.qr_code_scanner),
+            icon: const Icon(Icons.qr_code_scanner),
             tooltip: 'Escanear código de barras',
             onPressed: _scanBarcode,
           ),
           IconButton(
-            icon: Icon(Icons.picture_as_pdf),
+            icon: const Icon(Icons.picture_as_pdf),
             tooltip: 'Exportar PDF',
             onPressed: _products.isEmpty ? null : _exportPdf,
           ),
@@ -196,7 +200,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
               decoration: InputDecoration(
                 labelText: 'Buscar por código de barras',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () {
                     _searchController.clear();
                     _loadProducts();
@@ -208,13 +212,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
           Expanded(
             child:
                 _products.isEmpty
-                    ? Center(child: Text('No hay productos para mostrar'))
+                    ? const Center(child: Text('No hay productos para mostrar'))
                     : ListView.builder(
                       itemCount: _products.length,
                       itemBuilder: (_, index) {
                         final p = _products[index];
                         return Card(
-                          margin: EdgeInsets.symmetric(
+                          margin: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
                           ),
@@ -223,13 +227,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
                             ),
                             title: Text(
                               p.name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -237,12 +241,12 @@ class _InventoryScreenState extends State<InventoryScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Text(
                                   'Código: ${p.barcode}',
-                                  style: TextStyle(fontSize: 14),
+                                  style: const TextStyle(fontSize: 14),
                                 ),
-                                SizedBox(height: 2),
+                                const SizedBox(height: 2),
                                 Text(
                                   'Stock: ${p.stock}    |    Vence: ${p.expiryDate}',
                                   style: TextStyle(
@@ -257,12 +261,18 @@ class _InventoryScreenState extends State<InventoryScreen> {
                               spacing: 8,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.edit, color: Colors.blue),
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
                                   tooltip: 'Editar stock',
                                   onPressed: () => _editStock(p),
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.delete, color: Colors.red),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
                                   tooltip: 'Eliminar producto',
                                   onPressed: () => _deleteProduct(p),
                                 ),
@@ -279,44 +289,73 @@ class _InventoryScreenState extends State<InventoryScreen> {
   }
 }
 
+// CLASE BARCODE SCANNER CORREGIDA
 class BarcodeScannerScreen extends StatefulWidget {
+  const BarcodeScannerScreen({Key? key}) : super(key: key);
+
   @override
   State<BarcodeScannerScreen> createState() => _BarcodeScannerScreenState();
 }
 
 class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
   final MobileScannerController _controller = MobileScannerController();
-  bool _isTorchOn = false;
-
-  void _toggleTorch() {
-    _controller.toggleTorch();
-    setState(() {
-      _isTorchOn = !_isTorchOn;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Escanear código de barras'),
+        title: const Text('Escanear código de barras'),
         actions: [
-          IconButton(
-            icon: Icon(_isTorchOn ? Icons.flash_on : Icons.flash_off),
+          /* IconButton(
+            icon: ValueListenableBuilder(
+              valueListenable: _controller.torchState,
+              builder: (context, state, child) {
+                switch (state) {
+                  case TorchState.off:
+                    return const Icon(Icons.flash_off);
+                  case TorchState.on:
+                    return const Icon(Icons.flash_on);
+                }
+              },
+            ),
             tooltip: 'Activar linterna',
-            onPressed: _toggleTorch,
+            onPressed: () => _controller.toggleTorch(),
           ),
+          IconButton(
+            icon: ValueListenableBuilder(
+              valueListenable: _controller.cameraFacingState,
+              builder: (context, state, child) {
+                switch (state) {
+                  case CameraFacing.front:
+                    return const Icon(Icons.camera_front);
+                  case CameraFacing.back:
+                    return const Icon(Icons.camera_rear);
+                }
+              },
+            ),
+            tooltip: 'Cambiar cámara',
+            onPressed: () => _controller.switchCamera(),
+          ), */
         ],
       ),
       body: MobileScanner(
         controller: _controller,
-        onDetect: (barcode, args) {
-          final String? code = barcode.rawValue;
-          if (code != null) {
-            Navigator.pop(context, code);
+        onDetect: (capture) {
+          final List<Barcode> barcodes = capture.barcodes;
+          if (barcodes.isNotEmpty) {
+            final String? code = barcodes.first.rawValue;
+            if (code != null && code.isNotEmpty) {
+              Navigator.pop(context, code);
+            }
           }
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }

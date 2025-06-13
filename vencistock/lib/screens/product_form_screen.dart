@@ -275,6 +275,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   }
 }
 
+// CLASE BARCODE SCANNER CORREGIDA
 class BarcodeScannerScreen extends StatefulWidget {
   const BarcodeScannerScreen({Key? key}) : super(key: key);
 
@@ -292,23 +293,24 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
       appBar: AppBar(
         title: const Text('Escanear Código de Barra'),
         actions: [
-          IconButton(
+          /* IconButton(
             icon: ValueListenableBuilder(
               valueListenable: cameraController.torchState,
               builder: (context, state, child) {
                 switch (state) {
-                  case TorchState.off:
+                  case false:
                     return const Icon(Icons.flash_off, color: Colors.grey);
-                  case TorchState.on:
+                  case true:
                     return const Icon(Icons.flash_on, color: Colors.yellow);
                 }
+                return const Icon(Icons.flash_off, color: Colors.grey);
               },
             ),
             onPressed: () => cameraController.toggleTorch(),
           ),
           IconButton(
             icon: ValueListenableBuilder(
-              valueListenable: cameraController.cameraFacingState,
+              valueListenable: cameraController.facing,
               builder: (context, state, child) {
                 switch (state) {
                   case CameraFacing.front:
@@ -316,24 +318,34 @@ class _BarcodeScannerScreenState extends State<BarcodeScannerScreen> {
                   case CameraFacing.back:
                     return const Icon(Icons.camera_rear);
                 }
+                return const Icon(Icons.flash_off, color: Colors.grey);
               },
             ),
             onPressed: () => cameraController.switchCamera(),
-          ),
+          ), */
         ],
       ),
       body: MobileScanner(
         controller: cameraController,
-        allowDuplicates: false,
-        onDetect: (barcode, args) {
+        onDetect: (capture) {
           if (!_isScanning) return;
-          final String? code = barcode.rawValue;
-          if (code != null && code.isNotEmpty) {
-            _isScanning = false;
-            Navigator.pop(context, code);
+
+          final List<Barcode> barcodes = capture.barcodes;
+          if (barcodes.isNotEmpty) {
+            final String? code = barcodes.first.rawValue;
+            if (code != null && code.isNotEmpty) {
+              _isScanning = false;
+              Navigator.pop(context, code);
+            }
           }
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    cameraController.dispose();
+    super.dispose();
   }
 }
